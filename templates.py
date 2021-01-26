@@ -21,9 +21,8 @@ Roll my own "template system".
 """
 import cgi
 import cgitb
+import html
 cgitb.enable()
-
-from cgi import escape
 
 __all__ = ['login_page', 'secret_page', 'after_login_incorrect']
 
@@ -52,6 +51,8 @@ def secret_page(username=None, password=None):
     if username is None or password is None:
         raise ValueError("You need to pass both username and password!")
 
+    # we used html.escape here as cgi.escape is deprecated
+    # details: https://docs.python.org/3.7/library/cgi.html#cgi.escape
     return _wrapper("""
     <h1> Welcome, {username}! </h1>
 
@@ -59,8 +60,8 @@ def secret_page(username=None, password=None):
         <span class="spoilers"> {password}</span>.
         </small>
     </p>
-    """.format(username=escape(username.capitalize()),
-               password=escape(password)))
+    """.format(username=html.escape(username.capitalize()),
+               password=html.escape(password)))
 
 
 def after_login_incorrect():
